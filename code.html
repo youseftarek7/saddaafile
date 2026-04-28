@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="light" dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#bf0029",
+                        "outline-variant": "#e6bdbb",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#221b00",
+                        "on-surface-variant": "#5d3f3e",
+                        "tertiary-container": "#caa900",
+                        "primary-fixed": "#ffdad8",
+                        "on-surface": "#1a1c1c",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "surface": "#f9f9f9",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#fd9d06",
+                        "surface-bright": "#f9f9f9",
+                        "on-primary-container": "#fffaf9",
+                        "secondary-fixed": "#ffddbb",
+                        "on-secondary-container": "#653c00",
+                        "surface-variant": "#e2e2e2",
+                        "on-primary-fixed-variant": "#92001d",
+                        "secondary-fixed-dim": "#ffb868",
+                        "surface-container-high": "#e8e8e8",
+                        "primary-fixed-dim": "#ffb3b1",
+                        "primary": "#b90027",
+                        "on-secondary-fixed-variant": "#673d00",
+                        "on-error": "#ffffff",
+                        "on-background": "#1a1c1c",
+                        "on-tertiary-container": "#4c3e00",
+                        "inverse-surface": "#2f3131",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#705d00",
+                        "inverse-on-surface": "#f0f1f1",
+                        "on-tertiary-fixed-variant": "#554600",
+                        "surface-dim": "#dadada",
+                        "tertiary-fixed": "#ffe171",
+                        "outline": "#916e6d",
+                        "error": "#ba1a1a",
+                        "secondary": "#885200",
+                        "primary-container": "#e31837",
+                        "on-primary-fixed": "#410007",
+                        "background": "#f9f9f9",
+                        "on-secondary-fixed": "#2b1700",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f3f3f3",
+                        "inverse-primary": "#ffb3b1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "xl": "32px",
+                        "margin": "20px",
+                        "lg": "24px",
+                        "sm": "12px",
+                        "base": "4px",
+                        "xs": "8px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Tajawal"],
+                        "headline-md": ["Tajawal"],
+                        "label-sm": ["Tajawal"],
+                        "body-md": ["Tajawal"],
+                        "headline-sm": ["Tajawal"],
+                        "headline-lg": ["Tajawal"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "label-sm": ["14px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .carousel-container { 
+            scroll-snap-type: x mandatory; 
+            scroll-behavior: smooth;
+            padding-bottom: 2rem;
+            -webkit-overflow-scrolling: touch;
+        }
+        .carousel-item { 
+            scroll-snap-align: center;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform, opacity;
+        }
+        /* Active state for premium spring-like focus */
+        .carousel-item.active {
+            transform: scale(1.02);
+            z-index: 10;
+            opacity: 1;
+            filter: drop-shadow(0 25px 25px rgb(0 0 0 / 0.15));
+        }
+        .carousel-item:not(.active) {
+            transform: scale(0.9);
+            opacity: 0.6;
+            filter: blur(1px);
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .text-shadow-sm { text-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        body { min-height: 100dvh; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-100 dark:border-zinc-800 shadow-sm top-0 z-50 flex justify-between items-center px-6 py-4 w-full sticky">
+<button class="text-zinc-400 dark:text-zinc-500 hover:opacity-80 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-2xl font-black tracking-tighter text-[#E31837] dark:text-red-500 font-sans tracking-tight antialiased">GOURMET</h1>
+</header>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-[1200px] mx-auto pt-8">
+<section class="px-6 mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">اكتشف النكهات</h2>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-70">اختيارات منتقاة بعناية لذائقتكم</p>
+</section>
+<!-- Horizontal Swipeable Carousel -->
+<div class="relative group mb-8 overflow-hidden">
+<!-- Glassmorphism Nav Buttons -->
+<div class="flex overflow-x-auto no-scrollbar carousel-container px-10 gap-4 py-8" id="carousel">
+<!-- Card 1: Sandwiches -->
+<div class="carousel-item active flex-none w-[80vw] md:w-[450px] aspect-[9/16] relative rounded-[40px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-zinc-100">
+<img alt="Gourmet Artisan Sandwich" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbpHkOzYrI_JPQLLw1b9AG3gPAwFg1A7IOdHGEqlHUgHCW3QHL9CicEgtjPGWWwjrEIqf0bARTMpD5NgpL5ttece8Bs-gU1A50H0GYi-4DBkW3KPmvjLHH27lG8Uja0nKITkAJ31K-pF3AlqROlszddOb3nkKbE9pvGietH_fueNUzf_MzrcPhxTfl8fEnupj60Bvd7Kt_v19JpJ6xoJcXJKDROGwegtaYOZbSSBfONjSnOzmM4VUy63aZQALs0HXSSaDzKU8OQXg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<div class="absolute top-6 right-6">
+<span class="glass-nav px-4 py-1.5 rounded-full text-white text-xs font-bold tracking-widest uppercase">١٢ صنف</span>
+</div>
+<div class="absolute bottom-0 right-0 p-10 w-full">
+<span class="text-white/70 font-label-sm tracking-[0.2em] uppercase mb-3 block">اختيارات بريميوم</span>
+<h3 class="font-headline-lg text-[40px] leading-tight text-white text-shadow-sm mb-6">ساندوتشات</h3>
+<div class="flex items-center gap-2">
+<span class="bg-white px-8 py-3 rounded-full text-black text-sm font-bold shadow-xl active:scale-95 transition-transform">استكشف القائمة</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Crepes -->
+<div class="carousel-item flex-none w-[80vw] md:w-[450px] aspect-[9/16] relative rounded-[40px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-zinc-100">
+<img alt="Delicate Sweet Crepes" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxjSOmx-I9RDjKTBhapjZNBHCpHPpjrrqdDMpjiFMlLuBEH_Ng7k9rOLnOX2H59sh6u7wdnvdzcFju-QtTIuWdByhBnvscQKuxWKxeVRtG8rR711vnzENxcOlya_QdLMgwIYyvvkYHWVDvQvEMjcpRWmcOOOysbjyBUP96LOYy4SCVl8GOdRiKPJlMH2QNEzrdzia9C8drNmI9h1FjrnT2UfoWlob9qGZuZTG47Rb31GZ-047mPscPscBLIsjt_pl52UhhGi43VMA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<div class="absolute top-6 right-6">
+<span class="glass-nav px-4 py-1.5 rounded-full text-white text-xs font-bold tracking-widest uppercase">٨ أصناف</span>
+</div>
+<div class="absolute bottom-0 right-0 p-10 w-full">
+<span class="text-white/70 font-label-sm tracking-[0.2em] uppercase mb-3 block">حلويات فرنسية</span>
+<h3 class="font-headline-lg text-[40px] leading-tight text-white text-shadow-sm mb-6">كريب</h3>
+<div class="flex items-center gap-2">
+<span class="bg-white px-8 py-3 rounded-full text-black text-sm font-bold shadow-xl active:scale-95 transition-transform">استكشف القائمة</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Appetizers -->
+<div class="carousel-item flex-none w-[80vw] md:w-[450px] aspect-[9/16] relative rounded-[40px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-zinc-100">
+<img alt="Elegant Appetizer Platter" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDw-DzpliPnxyT3nrFHiPFTrIE54HVKhPDVU7wPK1F-T2g_J3P62dw9XetE6cIT4la2b7LEQhDWMIWlApsteUEHZ4FaZXBbAJLsW_uMvgxiKL5lIzwnHbD4rkulCrrGekrO0e_zzvWWkik6dgjvh-cVfCRTFCA374oBKD28wV5Tm5jLKhfJcRpC-DQOSX5y8Sk-QPgCQIyMIDtKbrkJfxq6UpmTmjJL4MeNzP1FPYL4keZICdh9_J07Jalpi_Zksk-7JKYPWiX1foc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<div class="absolute top-6 right-6">
+<span class="glass-nav px-4 py-1.5 rounded-full text-white text-xs font-bold tracking-widest uppercase">١٥ صنف</span>
+</div>
+<div class="absolute bottom-0 right-0 p-10 w-full">
+<span class="text-white/70 font-label-sm tracking-[0.2em] uppercase mb-3 block">بداية شهية</span>
+<h3 class="font-headline-lg text-[40px] leading-tight text-white text-shadow-sm mb-6">مقبلات</h3>
+<div class="flex items-center gap-2">
+<span class="bg-white px-8 py-3 rounded-full text-black text-sm font-bold shadow-xl active:scale-95 transition-transform">استكشف القائمة</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Meats -->
+<div class="carousel-item flex-none w-[80vw] md:w-[450px] aspect-[9/16] relative rounded-[40px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-zinc-100">
+<img alt="Grilled Premium Steak" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTbsGKCFkFM1OQVQfZrQS5R2ND0AInPFQ8bVxgtnADl_qX9VsPqLrsh5PI9jTUtf4-drqokRJryN-7ViloOQdjuKXzIF0PDdVzJsVV3bvtHGdHoxxnK5LeRHbCzCEmITrmVdBN3mdZIJi77aSikQ9PUUjYyzYtdgwnUjzQj7dURRpiDPdk14jlDFLa2BIx1WWTzAK-_0EuzAeRTdZnHTchGFrXIp0qB-W1E75HDOt1oXoVlpvCXbZY1UukeekGEvNsBQWETgAhL8w"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<div class="absolute top-6 right-6">
+<span class="glass-nav px-4 py-1.5 rounded-full text-white text-xs font-bold tracking-widest uppercase">١٠ أصناف</span>
+</div>
+<div class="absolute bottom-0 right-0 p-10 w-full">
+<span class="text-white/70 font-label-sm tracking-[0.2em] uppercase mb-3 block">قطع مختارة</span>
+<h3 class="font-headline-lg text-[40px] leading-tight text-white text-shadow-sm mb-6">لحوم</h3>
+<div class="flex items-center gap-2">
+<span class="bg-white px-8 py-3 rounded-full text-black text-sm font-bold shadow-xl active:scale-95 transition-transform">استكشف القائمة</span>
+</div>
+</div>
+</div>
+<!-- Spacer for right padding -->
+<div class="flex-none w-10 h-full"></div>
+</div>
+<!-- Custom Smooth Progress Bar -->
+<div class="flex justify-center items-center gap-3 mt-4 pb-6" id="progress-container">
+<div class="progress-dot w-8 h-1.5 rounded-full bg-primary transition-all duration-300"></div>
+<div class="progress-dot w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 transition-all duration-300"></div>
+<div class="progress-dot w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 transition-all duration-300"></div>
+<div class="progress-dot w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 transition-all duration-300"></div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-2xl fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 border-t border-zinc-100/50 dark:border-zinc-800/50 shadow-[0_-10px_40px_rgba(0,0,0,0.04)] rounded-t-[32px]">
+<a class="flex flex-col items-center justify-center text-[#E31837] dark:text-red-400 gap-1 transform scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">home_app_logo</span>
+<span class="text-[11px] font-semibold uppercase tracking-wider">الرئيسية</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 gap-1 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[11px] font-semibold uppercase tracking-wider">اكتشف</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 gap-1 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-[11px] font-semibold uppercase tracking-wider">الطلبات</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-500 gap-1 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[11px] font-semibold uppercase tracking-wider">حسابي</span>
+</a>
+</nav>
+<script>
+        // Enhanced carousel logic
+        const carousel = document.getElementById('carousel');
+        const items = document.querySelectorAll('.carousel-item');
+        const dots = document.querySelectorAll('.progress-dot');
+
+        carousel.addEventListener('scroll', () => {
+            const scrollLeft = carousel.scrollLeft;
+            const itemWidth = items[0].offsetWidth + 16; // width + gap
+            const centerIndex = Math.round(Math.abs(scrollLeft) / itemWidth);
+
+            items.forEach((item, index) => {
+                if (index === centerIndex) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            dots.forEach((dot, index) => {
+                if (index === centerIndex) {
+                    dot.classList.remove('w-1.5', 'bg-zinc-300', 'dark:bg-zinc-700');
+                    dot.classList.add('w-8', 'bg-primary');
+                } else {
+                    dot.classList.remove('w-8', 'bg-primary');
+                    dot.classList.add('w-1.5', 'bg-zinc-300', 'dark:bg-zinc-700');
+                }
+            });
+        });
+    </script>
+</body></html>

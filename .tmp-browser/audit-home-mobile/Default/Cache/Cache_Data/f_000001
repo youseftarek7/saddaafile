@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>مطعم السعادة</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;700;800&family=Cairo:wght@400;500;600;700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // ⚠️ ضع إعدادات Firebase الخاصة بك هنا
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjie2Psi57Md2oqbeSd4U-Hr5VsVAnNb0",
+      authDomain: "saddares.firebaseapp.com",
+      projectId: "saddares",
+      storageBucket: "saddares.firebasestorage.app",
+      messagingSenderId: "287878152677",
+      appId: "1:287878152677:web:556b5d7a45e804794bef0c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // جعل Firebase متاح للكود الرئيسي
+    window.db = db;
+    window.fsCollection = collection;
+    window.fsAddDoc = addDoc;
+    window.fsGetDocs = getDocs;
+    window.fsGetDoc = getDoc;
+    window.fsDoc = doc;
+    window.fsSetDoc = setDoc;
+    window.fsUpdateDoc = updateDoc;
+    window.fsDeleteDoc = deleteDoc;
+    window.fsServerTimestamp = serverTimestamp;
+    window.fsQuery = query;
+    window.fsOrderBy = orderBy;
+    window.fsOnSnapshot = onSnapshot;
+    window.firebaseReady = true;
+    document.dispatchEvent(new Event('firebaseReady'));
+  </script>
+</head>
+<body>
+
+<!-- ==========================================
+     PAGE LOADER
+     ========================================== -->
+<div id="page-loader">
+  <div class="loader-ring"></div>
+  <p style="color:#888;font-size:0.9rem;font-family:'Cairo',sans-serif;">جاري التحميل...</p>
+</div>
+
+<!-- ==========================================
+     NOTIFICATION TOAST
+     ========================================== -->
+<div id="toast" class="notification-toast"></div>
+
+<!-- ==========================================
+     HERO SECTION
+     ========================================== -->
+<header class="reference-hero-section">
+  <div class="reference-hero-shell">
+    <div class="reference-hero-surface" aria-label="عرض مطعم السعادة">
+      <div class="reference-hero-surface__decor" aria-hidden="true">
+        <span class="reference-hero-orb reference-hero-orb--top-left"></span>
+        <span class="reference-hero-orb reference-hero-orb--top-right"></span>
+        <span class="reference-hero-orb reference-hero-orb--mid-left"></span>
+        <span class="reference-hero-orb reference-hero-orb--mid-right"></span>
+        <span class="reference-hero-flow reference-hero-flow--left"></span>
+        <span class="reference-hero-flow reference-hero-flow--center"></span>
+        <span class="reference-hero-flow reference-hero-flow--right"></span>
+      </div>
+
+      <div class="reference-hero-status is-open" id="reference-hero-status" aria-live="polite">
+        <span class="reference-hero-status__icon" aria-hidden="true">
+          <i class="fas fa-bag-shopping"></i>
+        </span>
+        <span class="reference-hero-status__text">مفتوح الآن</span>
+      </div>
+
+      <div class="reference-hero-burger-wrap">
+        <span class="reference-hero-burger-shadow" aria-hidden="true"></span>
+        <img src="hero-burger.png" alt="برجر من مطعم السعادة" class="reference-hero-burger" id="hero-img">
+      </div>
+
+      <div class="reference-hero-content" role="group" aria-label="إجراءات سريعة">
+        <div class="reference-hero-content__decor" aria-hidden="true">
+          <span class="reference-hero-chevron-stack">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span class="reference-hero-double-arrows"><i class="fas fa-angle-double-left"></i></span>
+          <span class="reference-hero-circle-stripes"></span>
+          <span class="reference-hero-bottom-stripes"></span>
+        </div>
+
+        <h1 class="reference-hero-title">مطعم السعادة</h1>
+
+        <div class="reference-hero-actions">
+          <button class="reference-hero-btn reference-hero-btn--order" onclick="scrollToMenu()" aria-label="اطلب الآن من المنيو">
+            <i class="fas fa-bag-shopping"></i>
+            <span>اطلب الآن</span>
+          </button>
+          <a href="tel:01027450811" class="reference-hero-btn reference-hero-btn--call" aria-label="اتصل بالمطعم">
+            <i class="fas fa-phone-alt"></i>
+            <span>اتصل الآن</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- legacy hero removed -->
+
+<!-- ==========================================
+     MAIN MENU SECTION
+     ========================================== -->
+<main id="menu-section">
+
+  <!-- الصفحة الرئيسية -->
+  <section id="sections-view" class="home-sections">
+    <div class="home-proof-grid">
+      <article class="proof-card">
+        <div class="proof-icon">
+          <i class="fas fa-star"></i>
+        </div>
+        <span class="proof-label">تقييم العملاء</span>
+        <strong class="proof-value">4.5 / 5</strong>
+        <p class="proof-meta">طلبات متكررة وتجربة واضحة تخلي القرار أسرع من أول زيارة.</p>
+      </article>
+
+      <article class="proof-card">
+        <div class="proof-icon">
+          <i class="fas fa-fire"></i>
+        </div>
+        <span class="proof-label">الأكثر طلبًا اليوم</span>
+        <strong class="proof-value" id="proof-top-item">تشيكن اند بيف</strong>
+        <p class="proof-meta">وجبة مشبعة مناسبة للجوع الكبير والطلب السريع بدون حيرة.</p>
+      </article>
+
+      <article class="proof-card">
+        <div class="proof-icon">
+          <i class="fas fa-layer-group"></i>
+        </div>
+        <span class="proof-label">تنوع المنيو</span>
+        <strong class="proof-value" id="proof-total-items">0+</strong>
+        <p class="proof-meta">كريب، برجر، ساندوتشات وإضافات تغطي كل مزاج وكل نوع طلب.</p>
+      </article>
+    </div>
+
+    <section id="quick-start-section">
+      <div class="home-section-head">
+        <div>
+          <span class="home-section-overline">ابدأ بسرعة</span>
+          <h2 class="home-section-title">اختار الركن المناسب</h2>
+        </div>
+        <p class="home-section-note">بطاقات أوضح، صور حقيقية، وطريق أسرع للوصول للقسم اللي يناسبك.</p>
+      </div>
+      <div class="sections-grid no-scrollbar" id="sections-grid"></div>
+    </section>
+
+  </section>
+
+  <!-- أقسام فرعية + المنتجات -->
+  <section id="products-view" style="display:none;padding:16px 0;">
+    <!-- زرار الرجوع -->
+    <div style="padding:0 16px;margin-bottom:16px;">
+      <button onclick="backToSections()" class="btn-secondary" style="padding:10px 16px;font-size:0.85rem;">
+        <i class="fas fa-arrow-right"></i>
+        رجوع للأقسام
+      </button>
+    </div>
+    <div class="menu-sticky-stack">
+    <div class="menu-tools">
+      <div class="menu-search-wrap">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          id="menu-search-input"
+          class="menu-search-input"
+          placeholder="ابحث عن أكلة... (مثال: كريب فراخ)"
+          oninput="handleMenuSearch(this.value)"
+        >
+        <button id="menu-search-clear" class="menu-search-clear" onclick="clearMenuSearch()" style="display:none;" aria-label="مسح البحث">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <button class="menu-filter-chip" onclick="clearMenuSearch()">
+        <i class="fas fa-layer-group"></i>
+        كل الأصناف
+      </button>
+    </div>
+    <!-- كاتيجوريز -->
+    <div class="no-scrollbar categories-scroll" id="categories-scroll" style="margin-bottom:16px;"></div>
+    </div>
+    <!-- عنوان القسم -->
+    <div class="section-header" style="margin-bottom:16px;">
+      <div class="section-header-line"></div>
+      <span class="section-header-title" id="current-cat-title">المنيو</span>
+      <div class="section-header-line"></div>
+    </div>
+    <!-- المنتجات -->
+    <div class="products-grid" id="products-grid"></div>
+  </section>
+
+</main>
+
+<!-- ==========================================
+     FOOTER
+     ========================================== -->
+<footer>
+  <div style="max-width:900px;margin:0 auto;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;margin-bottom:32px;">
+      <div>
+        <h3 style="font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:12px;">
+          مطعم <span style="color:var(--brand-red)">السعادة</span>
+        </h3>
+        <p style="color:var(--text-secondary);font-size:0.87rem;line-height:1.7;margin-bottom:16px;">
+          أحلى طعم في العريش! كريب، برجر، وساندوتشات بخلطاتنا المميزة.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a href="https://www.facebook.com/syrianfood8/" target="_blank" style="width:38px;height:38px;border-radius:50%;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.2);display:flex;align-items:center;justify-content:center;color:#1877F2;transition:all 0.2s;"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/alsadarestaurant/" target="_blank" style="width:38px;height:38px;border-radius:50%;background:rgba(228,64,95,0.1);border:1px solid rgba(228,64,95,0.2);display:flex;align-items:center;justify-content:center;color:#E4405F;transition:all 0.2s;"><i class="fab fa-instagram"></i></a>
+          <a href="https://wa.me/201027450811" target="_blank" style="width:38px;height:38px;border-radius:50%;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.2);display:flex;align-items:center;justify-content:center;color:#25D366;transition:all 0.2s;"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4 style="color:var(--brand-gold);font-weight:700;margin-bottom:12px;">اتصل بنا</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li><a href="tel:01027450811" style="color:var(--text-secondary);display:flex;align-items:center;gap:8px;font-size:0.87rem;"><i class="fas fa-phone-alt" style="color:var(--brand-red)"></i> 010 27 45 08 11</a></li>
+          <li><a href="tel:01283096099" style="color:var(--text-secondary);display:flex;align-items:center;gap:8px;font-size:0.87rem;"><i class="fas fa-phone-alt" style="color:var(--brand-red)"></i> 012 83 096 099</a></li>
+          <li><a href="tel:01108852324" style="color:var(--text-secondary);display:flex;align-items:center;gap:8px;font-size:0.87rem;"><i class="fas fa-phone-alt" style="color:var(--brand-red)"></i> 011 088 523 24</a></li>
+          <li style="color:var(--text-secondary);display:flex;align-items:center;gap:8px;font-size:0.87rem;margin-top:6px;">
+            <i class="fas fa-map-marker-alt" style="color:var(--brand-red);margin-top:2px;flex-shrink:0;"></i>
+            العريش، شارع 23 يوليو، ناصية شارع الأزهر
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color:var(--brand-gold);font-weight:700;margin-bottom:12px;">روابط سريعة</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li><button onclick="window.scrollTo({top:0,behavior:'smooth'})" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);font-family:'Cairo',sans-serif;font-size:0.87rem;display:flex;align-items:center;gap:8px;"><i class="fas fa-home" style="color:var(--brand-red)"></i> الرئيسية</button></li>
+          <li><button onclick="scrollToMenu()" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);font-family:'Cairo',sans-serif;font-size:0.87rem;display:flex;align-items:center;gap:8px;"><i class="fas fa-utensils" style="color:var(--brand-red)"></i> المنيو</button></li>
+          <li><button onclick="openTracking()" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);font-family:'Cairo',sans-serif;font-size:0.87rem;display:flex;align-items:center;gap:8px;"><i class="fas fa-map-pin" style="color:var(--brand-red)"></i> تتبع الطلب</button></li>
+          <li><button onclick="openAI()" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);font-family:'Cairo',sans-serif;font-size:0.87rem;display:flex;align-items:center;gap:8px;"><i class="fas fa-robot" style="color:var(--brand-red)"></i> المساعد الذكي</button></li>
+        </ul>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:20px;text-align:center;">
+      <p style="color:var(--text-muted);font-size:0.8rem;">© 2026 جميع الحقوق محفوظة لـ <span style="color:var(--brand-gold);font-weight:700;">مطعم السعادة</span></p>
+      <p style="color:var(--text-muted);font-size:0.75rem;margin-top:8px;">
+        تم التطوير بواسطة 
+        <a href="https://wa.me/201020805451" target="_blank" style="color:var(--brand-red);font-weight:700;">محمود عبدالمعطي</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- ==========================================
+     BOTTOM NAVIGATION
+     ========================================== -->
+<nav class="reference-bottom-nav bottom-nav">
+  <button class="reference-bottom-nav__item nav-item active" id="nav-home" onclick="navGoHome()">
+    <i class="fas fa-house"></i>
+    <span>الرئيسية</span>
+  </button>
+  <button class="reference-bottom-nav__item nav-item" id="nav-menu" onclick="navGoMenu()">
+    <i class="fas fa-utensils"></i>
+    <span>المنيو</span>
+  </button>
+  <button class="reference-bottom-nav__item nav-item" id="nav-cart" onclick="openCart()">
+    <i class="fas fa-bag-shopping"></i>
+    <span>السلة</span>
+    <div class="nav-cart-badge hidden-badge" id="cart-badge">0</div>
+  </button>
+  <button class="reference-bottom-nav__item nav-item" id="nav-track" onclick="openTracking()">
+    <i class="fas fa-location-dot"></i>
+    <span>تتبع</span>
+  </button>
+  <button class="reference-bottom-nav__item nav-item" id="nav-feedback" onclick="openFeedbackModal()">
+    <i class="fas fa-comment-dots"></i>
+    <span>الشكاوى والتقييم</span>
+  </button>
+</nav>
+
+<!-- legacy bottom nav removed -->
+
+<!-- ==========================================
+     CART MODAL
+     ========================================== -->
+<div class="cart-backdrop" id="cart-backdrop" onclick="closeCart()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h2 style="font-weight:700;font-size:1.05rem;display:flex;align-items:center;gap:8px;">
+      <i class="fas fa-shopping-bag" style="color:var(--brand-red)"></i> السلة
+    </h2>
+    <button onclick="closeCart()" style="width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:50%;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="cart-body" id="cart-body">
+    <!-- Cart items injected by JS -->
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <!-- Customer form -->
+    <div id="customer-form-wrap" style="margin-bottom:16px;">
+      <h3 style="font-size:0.85rem;font-weight:700;color:var(--brand-gold);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+        <i class="fas fa-user-circle"></i> بيانات الطلب
+      </h3>
+      <div class="form-group">
+        <label class="form-label">الاسم بالكامل</label>
+        <input type="text" id="cust-name" class="form-input" placeholder="اكتب اسمك هنا">
+      </div>
+      <div class="form-group">
+        <label class="form-label">رقم الهاتف</label>
+        <input type="tel" id="cust-phone" class="form-input" placeholder="01xxxxxxxxx">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="form-label" style="margin-bottom:8px;display:block;">طريقة الاستلام</label>
+        <div class="order-type-wrap">
+          <label class="order-type-label">
+            <input type="radio" name="orderType" value="delivery" checked onchange="toggleAddressField()">
+            <div class="order-type-card">
+              <i class="fas fa-motorcycle"></i>
+              <span>دليفري</span>
+            </div>
+          </label>
+          <label class="order-type-label">
+            <input type="radio" name="orderType" value="pickup" onchange="toggleAddressField()">
+            <div class="order-type-card">
+              <i class="fas fa-store"></i>
+              <span>استلام</span>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div id="address-field" class="form-group">
+        <label class="form-label">العنوان بالتفصيل</label>
+        <textarea id="cust-address" class="form-input" rows="2" placeholder="الشارع، رقم المبنى..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ملاحظة (اختياري)</label>
+        <textarea id="order-note" class="form-input" rows="2" placeholder="مثلا: بدون كاتشب..."></textarea>
+      </div>
+    </div>
+    <!-- Total & checkout -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <span style="color:var(--text-secondary);font-size:0.9rem;">الإجمالي:</span>
+      <span id="cart-total" style="font-weight:700;font-size:1.2rem;color:var(--brand-gold);">0 ج.م</span>
+    </div>
+    <button onclick="checkout()" class="btn-primary" style="width:100%;justify-content:center;border-radius:12px;">
+      <i class="fab fa-whatsapp" style="font-size:1.2rem;"></i>
+      إتمام الطلب عبر واتساب
+    </button>
+  </div>
+</div>
+
+<!-- ==========================================
+     OPTIONS MODAL
+     ========================================== -->
+<div class="modal-backdrop" id="options-backdrop" onclick="handleOptionsBackdrop(event)">
+  <div class="options-modal" id="options-modal">
+    <div class="modal-header">
+      <div class="modal-img-container">
+        <img id="modal-img" src="" alt="صورة المنتج">
+        <div class="modal-img-overlay">
+          <h3 id="modal-item-name" style="font-weight:700;font-size:1.05rem;color:#fff;"></h3>
+        </div>
+        <button onclick="closeOptionsModal()" class="modal-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <!-- Injected by JS -->
+    </div>
+    <div class="modal-footer">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span style="color:var(--text-secondary);font-size:0.88rem;">الإجمالي:</span>
+        <span id="modal-total-price" style="font-size:1.3rem;font-weight:700;color:var(--brand-gold);">0 ج.م</span>
+      </div>
+      <button id="modal-add-btn" onclick="submitOptionOrder()" class="btn-primary" style="width:100%;justify-content:center;border-radius:12px;font-size:1rem;">
+        <i class="fas fa-cart-plus"></i>
+        إضافة للسلة
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     AI MODAL
+     ========================================== -->
+<div class="ai-modal-wrap" id="ai-modal-wrap" onclick="handleAIBackdrop(event)">
+  <div class="ai-modal">
+    <!-- Header -->
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+          <i class="fas fa-robot" style="color:var(--brand-red);font-size:1rem;"></i>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:0.95rem;">مساعد السعادة</div>
+          <div style="font-size:0.7rem;color:var(--brand-gold);display:flex;align-items:center;gap:4px;">
+            <span style="width:6px;height:6px;background:#4ade80;border-radius:50%;display:inline-block;"></span>
+            متاح الآن
+          </div>
+        </div>
+      </div>
+      <button onclick="closeAI()" style="width:34px;height:34px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:50%;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <!-- Body -->
+    <div style="flex:1;overflow-y:auto;padding:20px;" id="ai-body">
+      <!-- Main view -->
+      <div id="ai-main-view">
+        <p style="text-align:center;color:var(--text-secondary);font-size:0.88rem;margin-bottom:20px;">
+          قولي حاسس بإيه وأنا هظبطلك الأكلة! 😉
+        </p>
+        <div class="mood-grid">
+          <button class="mood-btn" onclick="askAI('تصبيرة - محتاج وجبة خفيفة سريعة')">
+            <span class="emoji">🍟</span>
+            <span class="mood-name">تصبيرة</span>
+            <span class="mood-desc">وجبة خفيفة على السريع</span>
+          </button>
+          <button class="mood-btn" onclick="askAI('حاجة تشبع - عايز وجبة كبيرة مشبعة')">
+            <span class="emoji">🍔</span>
+            <span class="mood-name">حاجة تشبع</span>
+            <span class="mood-desc">وجبة تملى التانك</span>
+          </button>
+          <button class="mood-btn" onclick="askAI('طعم يبهرك - اقترحلي أكلة مميزة')">
+            <span class="emoji">✨</span>
+            <span class="mood-name">طعم يبهرك</span>
+            <span class="mood-desc">أعلى تقييم واختراعات</span>
+          </button>
+          <button class="mood-btn" onclick="askAI('أنا جعان جداً - عايز وليمة كبيرة')">
+            <span class="emoji">🦁</span>
+            <span class="mood-name">جعان جداً</span>
+            <span class="mood-desc">عايز وليمة لوحدي</span>
+          </button>
+        </div>
+        <div style="position:relative;margin-top:8px;">
+          <input type="text" id="ai-user-input" class="form-input" placeholder="أو اكتب هنا... (مثلاً: عايز كريب فراخ)" 
+            onkeypress="if(event.key==='Enter') sendAIMessage()"
+            style="padding-left:50px;">
+          <button onclick="sendAIMessage()" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:36px;height:36px;background:var(--brand-red);border:none;border-radius:8px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.85rem;">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+      <!-- Results view -->
+      <div id="ai-results-view" style="display:none;">
+        <div id="ai-message-text" style="text-align:center;color:var(--brand-gold);font-weight:700;font-size:0.95rem;margin-bottom:16px;"></div>
+        <div id="ai-products-grid"></div>
+        <div style="text-align:center;margin-top:16px;">
+          <button onclick="resetAI()" class="btn-secondary" style="font-size:0.85rem;padding:10px 20px;">
+            <i class="fas fa-redo-alt"></i> جرب تاني
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     ORDER TRACKING MODAL
+     ========================================== -->
+<div class="tracking-modal" id="tracking-modal" onclick="handleTrackingBackdrop(event)">
+  <div class="tracking-panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h2 style="font-weight:700;font-size:1rem;display:flex;align-items:center;gap:8px;">
+        <i class="fas fa-map-pin" style="color:var(--brand-red)"></i>
+        تتبع الطلب
+      </h2>
+      <button onclick="closeTracking()" style="width:34px;height:34px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:50%;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <!-- Search -->
+    <div id="tracking-search" style="display:flex;gap:8px;margin-bottom:20px;">
+      <input type="text" id="order-number-input" class="form-input" placeholder="أدخل رقم الطلب" style="flex:1;">
+      <button onclick="trackOrder()" class="btn-primary" style="padding:12px 16px;border-radius:10px;">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+    <!-- Result -->
+    <div id="tracking-result"></div>
+  </div>
+</div>
+
+<!-- ==========================================
+     ADMIN PANEL
+     ========================================== -->
+<div class="admin-panel" id="admin-panel">
+  <!-- Admin Header -->
+  <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#0a0a0a;position:sticky;top:0;z-index:10;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <i class="fas fa-shield-alt" style="color:var(--brand-red);font-size:1.2rem;"></i>
+      <span style="font-weight:700;font-size:1rem;">لوحة التحكم</span>
+    </div>
+    <button onclick="closeAdmin()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);cursor:pointer;padding:8px 12px;font-family:'Cairo',sans-serif;font-size:0.82rem;display:flex;align-items:center;gap:6px;">
+      <i class="fas fa-times"></i> إغلاق
+    </button>
+  </div>
+  <!-- Admin Nav -->
+  <div class="admin-nav">
+    <button class="admin-nav-btn active" onclick="adminTab('orders')" id="admin-tab-orders">
+      <i class="fas fa-list-alt"></i> الطلبات
+    </button>
+    <button class="admin-nav-btn" onclick="adminTab('products')" id="admin-tab-products">
+      <i class="fas fa-hamburger"></i> المنتجات
+    </button>
+    <button class="admin-nav-btn" onclick="adminTab('add-product')" id="admin-tab-add-product">
+      <i class="fas fa-plus"></i> إضافة منتج
+    </button>
+  </div>
+  <!-- Admin Body -->
+  <div id="admin-body" style="padding:16px 20px;"></div>
+</div>
+
+<!-- Hidden admin trigger: click logo 5 times -->
+<div id="admin-trigger" onclick="adminTriggerClick()" style="position:fixed;bottom:80px;left:8px;width:28px;height:28px;z-index:50;opacity:0;cursor:pointer;"></div>
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
+<script src="script.js"></script>
+<script>
+// Toggle address field
+function toggleAddressField() {
+  const type = document.querySelector('input[name="orderType"]:checked')?.value;
+  const field = document.getElementById('address-field');
+  if (field) field.style.display = type === 'delivery' ? 'flex' : 'none';
+}
+</script>
+</body>
+</html>

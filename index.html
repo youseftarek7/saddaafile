@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مطعم السعادة</title>
+  <meta name="description" content="اطلب منيو مطعم السعادة في العريش بسهولة. برجر، كريب، ساندوتشات ووجبات سريعة بتجربة طلب واضحة وسريعة على الموبايل والديسكتوب.">
+  <meta name="theme-color" content="#b4232f">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;700;800&family=Cairo:wght@400;500;600;700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjie2Psi57Md2oqbeSd4U-Hr5VsVAnNb0",
+      authDomain: "saddares.firebaseapp.com",
+      projectId: "saddares",
+      storageBucket: "saddares.firebasestorage.app",
+      messagingSenderId: "287878152677",
+      appId: "1:287878152677:web:556b5d7a45e804794bef0c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.db = db;
+    window.fsCollection = collection;
+    window.fsAddDoc = addDoc;
+    window.fsGetDocs = getDocs;
+    window.fsGetDoc = getDoc;
+    window.fsDoc = doc;
+    window.fsSetDoc = setDoc;
+    window.fsUpdateDoc = updateDoc;
+    window.fsDeleteDoc = deleteDoc;
+    window.fsServerTimestamp = serverTimestamp;
+    window.fsQuery = query;
+    window.fsOrderBy = orderBy;
+    window.fsOnSnapshot = onSnapshot;
+    window.firebaseReady = true;
+    document.dispatchEvent(new Event("firebaseReady"));
+  </script>
+</head>
+<body>
+
+<div id="page-loader">
+  <div class="loader-ring"></div>
+  <p class="page-loader-text">جاري التحميل...</p>
+</div>
+
+<div id="toast" class="notification-toast"></div>
+
+<div class="site-topbar">
+  <div class="site-topbar__inner">
+    <button class="site-brand" type="button" onclick="navGoHome()" aria-label="العودة إلى الرئيسية">
+      <span class="site-brand__logo"><i class="fas fa-burger"></i></span>
+      <span class="site-brand__copy">
+        <strong>مطعم السعادة</strong>
+        <small>تجربة أسرع من أول زيارة</small>
+      </span>
+    </button>
+
+    <div class="site-topbar__mobile-panel" id="mobile-menu-panel" aria-hidden="true">
+      <nav class="site-topbar__nav" aria-label="التنقل الرئيسي">
+        <button type="button" class="site-topbar__link" onclick="closeMobileMenu(); navGoHome()">الرئيسية</button>
+        <button type="button" class="site-topbar__link" onclick="closeMobileMenu(); scrollToMenu()">المنيو</button>
+        <button type="button" class="site-topbar__link" onclick="closeMobileMenu(); openTracking()">تتبع الطلب</button>
+        <button type="button" class="site-topbar__link" onclick="closeMobileMenu(); openFeedbackModal()">الآراء</button>
+      </nav>
+
+      <div class="site-topbar__actions">
+        <div class="site-topbar__pill">
+          <i class="fas fa-location-dot"></i>
+          <span>العريش - 23 يوليو</span>
+        </div>
+        <a href="tel:01027450811" class="site-topbar__cta" onclick="closeMobileMenu()">
+          <i class="fas fa-phone-alt"></i>
+          <span>اتصل الآن</span>
+        </a>
+      </div>
+
+      <div class="site-topbar__mobile-shortcuts" aria-label="اختصارات سريعة">
+        <button type="button" class="site-topbar__shortcut" onclick="closeMobileMenu(); openCart()">
+          <i class="fas fa-bag-shopping"></i>
+          <span>السلة</span>
+        </button>
+        <button type="button" class="site-topbar__shortcut" onclick="closeMobileMenu(); openAI()">
+          <i class="fas fa-robot"></i>
+          <span>المساعد</span>
+        </button>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="site-topbar__menu-toggle"
+      id="mobile-menu-toggle"
+      onclick="toggleMobileMenu()"
+      aria-label="فتح القائمة"
+      aria-expanded="false"
+      aria-controls="mobile-menu-panel"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</div>
+
+<div class="site-topbar__backdrop" id="mobile-menu-backdrop" onclick="closeMobileMenu()" hidden></div>
+
+<header class="reference-hero-section">
+  <div class="reference-hero-shell">
+    <div class="reference-hero-surface" aria-label="واجهة مطعم السعادة">
+      <div class="reference-hero-surface__decor" aria-hidden="true">
+        <span class="reference-hero-orb reference-hero-orb--top-left"></span>
+        <span class="reference-hero-orb reference-hero-orb--top-right"></span>
+        <span class="reference-hero-orb reference-hero-orb--mid-left"></span>
+        <span class="reference-hero-orb reference-hero-orb--mid-right"></span>
+        <span class="reference-hero-flow reference-hero-flow--left"></span>
+        <span class="reference-hero-flow reference-hero-flow--center"></span>
+        <span class="reference-hero-flow reference-hero-flow--right"></span>
+      </div>
+
+      <div class="reference-hero-status is-open" id="reference-hero-status" aria-live="polite">
+        <span class="reference-hero-status__icon" aria-hidden="true">
+          <i class="fas fa-bag-shopping"></i>
+        </span>
+        <span class="reference-hero-status__text">مفتوح الآن</span>
+      </div>
+
+      <div class="reference-hero-burger-wrap">
+        <span class="reference-hero-burger-shadow" aria-hidden="true"></span>
+        <img src="hero-burger.png" alt="برجر من مطعم السعادة" class="reference-hero-burger" id="hero-img">
+      </div>
+
+      <div class="reference-hero-content" role="group" aria-label="إجراءات سريعة">
+        <div class="reference-hero-content__decor" aria-hidden="true">
+          <span class="reference-hero-chevron-stack">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span class="reference-hero-double-arrows"><i class="fas fa-angle-double-left"></i></span>
+          <span class="reference-hero-circle-stripes"></span>
+          <span class="reference-hero-bottom-stripes"></span>
+        </div>
+
+        <div class="reference-hero-copy">
+          <span class="reference-hero-kicker">منيو مرتب وتجربة طلب أوضح</span>
+          <h1 class="reference-hero-title">مطعم السعادة</h1>
+          <p class="reference-hero-summary">
+            برجر، كريب، ووجبات مشبعة بصور أوضح وتنظيم أسرع يساعدك تختار وتطلب بدون حيرة.
+          </p>
+          <div class="reference-hero-meta" aria-label="مميزات التجربة">
+            <span><i class="fas fa-bolt"></i> تجربة سريعة</span>
+            <span><i class="fas fa-shield-heart"></i> قراءة مريحة للعين</span>
+            <span><i class="fas fa-fire-flame-curved"></i> خيارات بارزة من البداية</span>
+          </div>
+        </div>
+
+        <div class="reference-hero-actions">
+          <button class="reference-hero-btn reference-hero-btn--order" onclick="scrollToMenu()" aria-label="اطلب الآن من المنيو">
+            <i class="fas fa-bag-shopping"></i>
+            <span>اطلب الآن</span>
+          </button>
+          <a href="tel:01027450811" class="reference-hero-btn reference-hero-btn--call" aria-label="اتصل بالمطعم">
+            <i class="fas fa-phone-alt"></i>
+            <span>اتصل الآن</span>
+          </a>
+        </div>
+
+        <div class="reference-hero-highlights" aria-label="مؤشرات سريعة">
+          <article class="reference-hero-highlight-card">
+            <span class="reference-hero-highlight-label">الأكثر طلباً</span>
+            <strong id="hero-top-item">تشيكن اند بيف</strong>
+          </article>
+          <article class="reference-hero-highlight-card">
+            <span class="reference-hero-highlight-label">عدد الأصناف</span>
+            <strong id="hero-total-items">0+</strong>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="menu-section" class="site-shell">
+  <section id="sections-view" class="home-sections">
+    <div class="home-proof-grid">
+      <article class="proof-card">
+        <div class="proof-icon">
+          <i class="fas fa-star"></i>
+        </div>
+        <span class="proof-label">تقييم العملاء</span>
+        <strong class="proof-value">4.5 / 5</strong>
+        <p class="proof-meta">طلبات متكررة وتجربة واضحة تساعد على اتخاذ القرار أسرع من أول زيارة.</p>
+      </article>
+
+      <article class="proof-card">
+        <div class="proof-icon">
+          <i class="fas fa-fire"></i>
+        </div>
+        <span class="proof-label">الأكثر طلباً اليوم</span>
+        <strong class="proof-value" id="proof-top-item">تشيكن اند بيف</strong>
+        <p class="proof-meta">وجبة مشبعة مناسبة للجوع الكبير والطلب السريع بدون حيرة.</p>
+      </article>
+
+      <article class="proof-card">
+        <div class="proof-icon">
+          <i class="fas fa-layer-group"></i>
+        </div>
+        <span class="proof-label">تنوع المنيو</span>
+        <strong class="proof-value" id="proof-total-items">0+</strong>
+        <p class="proof-meta">كريب، برجر، ساندوتشات وإضافات تغطي أكثر من مزاج ونوع طلب.</p>
+      </article>
+    </div>
+
+    <section id="offers-section" class="home-panel featured-section">
+      <div class="home-section-head">
+        <div>
+          <span class="home-section-overline">اختيارات تساعدك تبدأ أسرع</span>
+          <h2 class="home-section-title">منتجات ترفع احتمالية الطلب من أول نظرة</h2>
+        </div>
+        <p class="home-section-note">بطاقات أوضح، أسعار مبدئية، ورسائل قصيرة تبني الثقة وتسرع قرار الشراء.</p>
+      </div>
+      <div class="popular-items-grid" id="popular-items-grid"></div>
+    </section>
+
+    <section id="quick-start-section" class="home-panel">
+      <div class="home-section-head">
+        <div>
+          <h2 class="home-section-title">اكتشف النكهات</h2>
+          <p class="home-section-note">اختيارات منتقاة بعناية لأذواقكم</p>
+        </div>
+      </div>
+      <div class="quick-start-carousel-frame">
+        <div class="sections-grid no-scrollbar" id="sections-grid" aria-label="الأقسام المميزة"></div>
+        <div class="quick-start-progress" id="quick-start-progress" aria-label="مؤشر التنقل بين الأقسام"></div>
+      </div>
+    </section>
+
+  </section>
+
+  <section id="products-view" class="products-view-shell" style="display:none;">
+    <div class="products-view-hero">
+      <div class="products-view-hero__copy">
+        <h1 class="products-view-hero__title" id="section-view-title">المنيو</h1>
+        <p class="products-view-hero__subtitle" id="section-view-subtitle">اختيارات منتقاة بعناية لأجلك</p>
+      </div>
+      <button type="button" class="products-view-hero__action" onclick="backToSections()">
+        <span>كل الأقسام</span>
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </div>
+
+    <div class="menu-sticky-stack">
+      <div class="menu-tools">
+        <div class="menu-search-wrap">
+          <i class="fas fa-search"></i>
+          <input
+            type="text"
+            id="menu-search-input"
+            class="menu-search-input"
+            placeholder="ابحث عن أكلة... (مثال: كريب فراخ)"
+            oninput="handleMenuSearch(this.value)"
+          >
+          <button id="menu-search-clear" class="menu-search-clear" onclick="clearMenuSearch()" style="display:none;" aria-label="مسح البحث">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <button class="menu-filter-chip" onclick="clearMenuSearch()">
+          <i class="fas fa-layer-group"></i>
+          كل الأصناف
+        </button>
+      </div>
+
+      <div class="no-scrollbar categories-scroll" id="categories-scroll"></div>
+    </div>
+
+    <div class="products-grid" id="products-grid"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <h2>مطعم <span>السعادة</span></h2>
+        <p>تجربة طلب أوضح وأهدأ للعين، مع منيو منظم وصور أقرب للواقع تساعدك توصل لاختيارك بسرعة.</p>
+        <div class="site-footer__social">
+          <a href="https://www.facebook.com/syrianfood8/" target="_blank" rel="noreferrer" aria-label="فيسبوك مطعم السعادة"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/alsadarestaurant/" target="_blank" rel="noreferrer" aria-label="إنستجرام مطعم السعادة"><i class="fab fa-instagram"></i></a>
+          <a href="https://wa.me/201027450811" target="_blank" rel="noreferrer" aria-label="واتساب مطعم السعادة"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+
+      <div class="site-footer__column">
+        <h3>اتصل بنا</h3>
+        <ul class="site-footer__list">
+          <li><a href="tel:01027450811"><i class="fas fa-phone-alt"></i> 010 27 45 08 11</a></li>
+          <li><a href="tel:01283096099"><i class="fas fa-phone-alt"></i> 012 83 096 099</a></li>
+          <li><a href="tel:01108852324"><i class="fas fa-phone-alt"></i> 011 088 523 24</a></li>
+          <li><span><i class="fas fa-location-dot"></i> العريش، شارع 23 يوليو، ناصية شارع الأزهر</span></li>
+        </ul>
+      </div>
+
+      <div class="site-footer__column">
+        <h3>اختصارات سريعة</h3>
+        <ul class="site-footer__list">
+          <li><button type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-house"></i> الرئيسية</button></li>
+          <li><button type="button" onclick="scrollToMenu()"><i class="fas fa-utensils"></i> المنيو</button></li>
+          <li><button type="button" onclick="openTracking()"><i class="fas fa-location-dot"></i> تتبع الطلب</button></li>
+          <li><button type="button" onclick="openAI()"><i class="fas fa-robot"></i> المساعد الذكي</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p>© 2026 جميع الحقوق محفوظة لـ <span>مطعم السعادة</span></p>
+      <p>تم التطوير بواسطة <a href="https://wa.me/201020805451" target="_blank" rel="noreferrer">محمود عبدالمعطي</a></p>
+      <p>تم التطوير بواسطة <a href="https://wa.me/201006635631" target="_blank" rel="noreferrer">يوسف طارق </a></p>
+
+    </div>
+  </div>
+</footer>
+
+<nav class="reference-bottom-nav bottom-nav">
+  <button class="reference-bottom-nav__item nav-item active" id="nav-home" onclick="navGoHome()">
+    <i class="fas fa-house"></i>
+    <span>الرئيسية</span>
+  </button>
+  <button class="reference-bottom-nav__item nav-item" id="nav-menu" onclick="navGoMenu()">
+    <i class="fas fa-utensils"></i>
+    <span>المنيو</span>
+  </button>
+  <button class="reference-bottom-nav__item nav-item" id="nav-cart" onclick="openCart()">
+    <i class="fas fa-bag-shopping"></i>
+    <span>السلة</span>
+    <div class="nav-cart-badge hidden-badge" id="cart-badge">0</div>
+  </button>
+  <button class="reference-bottom-nav__item nav-item" id="nav-track" onclick="openTracking()">
+    <i class="fas fa-location-dot"></i>
+    <span>تتبع</span>
+  </button>
+  <button class="reference-bottom-nav__item nav-item" id="nav-feedback" onclick="openFeedbackModal()">
+    <i class="fas fa-comment-dots"></i>
+    <span>التقييم</span>
+  </button>
+</nav>
+
+<div class="cart-backdrop" id="cart-backdrop" onclick="closeCart()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h2 class="cart-title">
+      <i class="fas fa-shopping-bag"></i>
+      <span>السلة</span>
+    </h2>
+    <button type="button" onclick="closeCart()" class="panel-close-btn" aria-label="إغلاق السلة">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="cart-body" id="cart-body"></div>
+
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <div id="customer-form-wrap" class="checkout-card">
+      <h3 class="checkout-card__title">
+        <i class="fas fa-user-circle"></i>
+        <span>بيانات الطلب</span>
+      </h3>
+
+      <div class="form-group">
+        <label class="form-label">الاسم بالكامل</label>
+        <input type="text" id="cust-name" class="form-input" placeholder="اكتب اسمك هنا">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">رقم الهاتف</label>
+        <input type="tel" id="cust-phone" class="form-input" placeholder="01xxxxxxxxx">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">طريقة الاستلام</label>
+        <div class="order-type-wrap">
+          <label class="order-type-label">
+            <input type="radio" name="orderType" value="delivery" checked onchange="toggleAddressField()">
+            <div class="order-type-card">
+              <i class="fas fa-motorcycle"></i>
+              <span>دليفري</span>
+            </div>
+          </label>
+          <label class="order-type-label">
+            <input type="radio" name="orderType" value="pickup" onchange="toggleAddressField()">
+            <div class="order-type-card">
+              <i class="fas fa-store"></i>
+              <span>استلام</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div id="address-field" class="form-group">
+        <label class="form-label">العنوان بالتفصيل</label>
+        <textarea id="cust-address" class="form-input" rows="2" placeholder="الشارع، رقم المبنى..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">ملاحظة (اختياري)</label>
+        <textarea id="order-note" class="form-input" rows="2" placeholder="مثلاً: بدون كاتشب..."></textarea>
+      </div>
+    </div>
+
+    <div class="checkout-summary">
+      <span>الإجمالي:</span>
+      <span id="cart-total">0 ج.م</span>
+    </div>
+
+    <button onclick="checkout()" class="btn-primary checkout-submit-btn">
+      <i class="fab fa-whatsapp"></i>
+      <span>إتمام الطلب</span>
+    </button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="options-backdrop" onclick="handleOptionsBackdrop(event)">
+  <div class="options-modal" id="options-modal">
+    <div class="modal-header">
+      <div class="modal-img-container">
+        <img id="modal-img" src="" alt="صورة المنتج">
+        <div class="modal-img-overlay">
+          <h3 id="modal-item-name" class="modal-product-title"></h3>
+        </div>
+        <button type="button" onclick="closeOptionsModal()" class="modal-close-btn" aria-label="إغلاق تفاصيل المنتج">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <div class="modal-summary">
+        <span>الإجمالي:</span>
+        <span id="modal-total-price">0 ج.م</span>
+      </div>
+      <button id="modal-add-btn" onclick="submitOptionOrder()" class="btn-primary modal-submit-btn">
+        <i class="fas fa-cart-plus"></i>
+        <span>إضافة للسلة</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="ai-modal-wrap" id="ai-modal-wrap" onclick="handleAIBackdrop(event)">
+  <div class="ai-modal">
+    <div class="panel-heading">
+      <div class="panel-heading__identity">
+        <span class="panel-heading__icon"><i class="fas fa-robot"></i></span>
+        <span class="panel-heading__copy">
+          <strong>مساعد السعادة</strong>
+          <small><span class="panel-online-dot"></span> متاح الآن</small>
+        </span>
+      </div>
+      <button type="button" onclick="closeAI()" class="panel-close-btn" aria-label="إغلاق المساعد الذكي">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="panel-body" id="ai-body">
+      <div id="ai-main-view">
+        <p class="panel-intro">قولي حاسس بإيه وأنا أرتب لك أقرب اقتراح مناسب للجوع والمزاج.</p>
+
+        <div class="mood-grid">
+          <button class="mood-btn" onclick="askAI('تصبيرة - محتاج وجبة خفيفة سريعة')">
+            <span class="emoji">🍟</span>
+            <span class="mood-name">تصبيرة</span>
+            <span class="mood-desc">وجبة خفيفة على السريع</span>
+          </button>
+          <button class="mood-btn" onclick="askAI('حاجة تشبع - عايز وجبة كبيرة مشبعة')">
+            <span class="emoji">🍔</span>
+            <span class="mood-name">حاجة تشبع</span>
+            <span class="mood-desc">وجبة تملى التانك</span>
+          </button>
+          <button class="mood-btn" onclick="askAI('طعم يبهرك - اقترحلي أكلة مميزة')">
+            <span class="emoji">✨</span>
+            <span class="mood-name">طعم يبهرك</span>
+            <span class="mood-desc">اقتراحات مميزة وسريعة</span>
+          </button>
+          <button class="mood-btn" onclick="askAI('أنا جعان جداً - عايز وليمة كبيرة')">
+            <span class="emoji">🦁</span>
+            <span class="mood-name">جعان جداً</span>
+            <span class="mood-desc">خيار كبير ومشبع</span>
+          </button>
+        </div>
+
+        <div class="panel-search">
+          <input
+            type="text"
+            id="ai-user-input"
+            class="form-input panel-search__input"
+            placeholder="اكتب هنا... (مثلاً: عايز كريب فراخ)"
+            onkeypress="if(event.key==='Enter') sendAIMessage()"
+          >
+          <button type="button" onclick="sendAIMessage()" class="panel-search__submit" aria-label="إرسال الرسالة">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="ai-results-view" style="display:none;">
+        <div id="ai-message-text" class="ai-message-text"></div>
+        <div id="ai-products-grid"></div>
+        <div class="panel-actions">
+          <button onclick="resetAI()" class="btn-secondary">
+            <i class="fas fa-redo-alt"></i>
+            <span>جرب تاني</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tracking-modal" id="tracking-modal" onclick="handleTrackingBackdrop(event)">
+  <div class="tracking-panel">
+    <div class="panel-heading">
+      <div class="panel-heading__identity">
+        <span class="panel-heading__icon"><i class="fas fa-location-dot"></i></span>
+        <span class="panel-heading__copy">
+          <strong>تتبع الطلب</strong>
+          <small>اعرف حالة الطلب في ثوانٍ</small>
+        </span>
+      </div>
+      <button type="button" onclick="closeTracking()" class="panel-close-btn" aria-label="إغلاق تتبع الطلب">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div id="tracking-search" class="tracking-search">
+      <input type="text" id="order-number-input" class="form-input" placeholder="أدخل رقم الطلب أو رقم الموبايل">
+      <button onclick="trackOrder()" class="btn-primary tracking-search__btn" aria-label="ابدأ التتبع">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+
+    <div id="tracking-result"></div>
+  </div>
+</div>
+
+<div class="admin-panel" id="admin-panel">
+  <div class="admin-panel__header">
+    <div class="admin-panel__title">
+      <i class="fas fa-shield-alt"></i>
+      <span>لوحة التحكم</span>
+    </div>
+    <button onclick="closeAdmin()" class="btn-secondary admin-panel__close">
+      <i class="fas fa-times"></i>
+      <span>إغلاق</span>
+    </button>
+  </div>
+
+  <div class="admin-nav">
+    <button class="admin-nav-btn active" onclick="adminTab('orders')" id="admin-tab-orders">
+      <i class="fas fa-list-alt"></i>
+      <span>الطلبات</span>
+    </button>
+    <button class="admin-nav-btn" onclick="adminTab('products')" id="admin-tab-products">
+      <i class="fas fa-hamburger"></i>
+      <span>المنتجات</span>
+    </button>
+    <button class="admin-nav-btn" onclick="adminTab('add-product')" id="admin-tab-add-product">
+      <i class="fas fa-plus"></i>
+      <span>إضافة منتج</span>
+    </button>
+  </div>
+
+  <div id="admin-body" class="admin-panel__body"></div>
+</div>
+
+<div id="admin-trigger" onclick="adminTriggerClick()" class="admin-trigger" aria-hidden="true"></div>
+
+<script src="script.js"></script>
+<script>
+function toggleAddressField() {
+  const type = document.querySelector('input[name="orderType"]:checked')?.value;
+  const field = document.getElementById("address-field");
+  if (field) field.style.display = type === "delivery" ? "flex" : "none";
+}
+</script>
+</body>
+</html>
